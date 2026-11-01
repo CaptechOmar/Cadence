@@ -590,6 +590,15 @@ html:not(.nomouse) .lib-i:hover{background:#fff;color:#111;box-shadow:0 .4rem 1.
 kbd{display:inline-flex;align-items:center;justify-content:center;min-width:2rem;height:2rem;padding:0 .6rem;border-radius:.45rem;background:var(--bg2);color:var(--fg);
   border:1px solid var(--line2);border-bottom-width:3px;font:600 .92rem/1 inherit;font-family:inherit;box-shadow:0 1px 0 rgba(0,0,0,.04)}
 .knote{font-size:.9rem;color:var(--fg2);margin:0}
+/* TV remote page (TV only): the Magic Remote picture on the left, what each button does on the right */
+.keys.rm .ktabs{display:none}
+.rmwrap{display:flex;align-items:center;gap:2rem}
+.rmwrap .kgrp{flex:1}
+.remote{flex:none;height:21rem;width:auto;color:var(--fg2)}
+.remote .rbody{fill:var(--bg2);stroke:var(--fg3)}
+.remote .rk{fill:var(--sel);stroke:var(--fg3)}
+.pb.r.cr{background:#d83a34}.pb.r.cg{background:#2ea44f}.pb.r.cy{background:#e9b400}.pb.r.cb{background:#2f6fe4}
+.pb.r.dot{font-size:0}
 .kpane .ps{display:none}
 .kpane.ps .ps{display:revert}.kpane.ps .kcols.ps{display:grid}.kpane.ps svg.ps{display:block}.kpane.ps .xbox{display:none!important}
 .pb.psx{background:#4f7fcf}.pb.pso{background:#d9534f}.pb.pssq{background:#c97aa8}.pb.pstr{background:#3fae85}
@@ -788,6 +797,35 @@ kbd{display:inline-flex;align-items:center;justify-content:center;min-width:2rem
           </div>
         </div>
         <p class="knote">The Ctrl shortcuts also work while you type in Search or on the sign-in page. Media keys on your keyboard work too.</p>
+      </section>
+      <section class="kpane" id="kp-remote" hidden>
+        <div class="rmwrap">
+          <svg class="remote" viewBox="0 0 140 400" role="img" aria-label="TV remote">
+            <rect class="rbody" x="12" y="4" width="116" height="392" rx="50" stroke-width="3"/>
+            <circle class="rk" cx="70" cy="40" r="11" stroke-width="2"/>
+            <circle class="rk" cx="70" cy="118" r="44" stroke-width="2"/>
+            <circle class="rk" cx="70" cy="118" r="19" stroke-width="2"/>
+            <g fill="currentColor" opacity=".7"><path d="M70 82l6 8h-12z"/><path d="M70 154l6-8h-12z"/><path d="M34 118l8-6v12z"/><path d="M106 118l-8-6v12z"/></g>
+            <circle class="rk" cx="38" cy="186" r="11" stroke-width="2"/><circle class="rk" cx="102" cy="186" r="11" stroke-width="2"/>
+            <circle cx="35" cy="226" r="9" fill="#d83a34"/><circle cx="60" cy="226" r="9" fill="#2ea44f"/>
+            <circle cx="85" cy="226" r="9" fill="#e9b400"/><circle cx="110" cy="226" r="9" fill="#2f6fe4"/>
+            <rect class="rk" x="30" y="262" width="30" height="76" rx="15" stroke-width="2"/><rect class="rk" x="80" y="262" width="30" height="76" rx="15" stroke-width="2"/>
+            <g stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".7"><path d="M38 286h14M45 279v14"/><path d="M38 318h14"/><path d="M88 286h14M95 279v14"/><path d="M88 318h14"/></g>
+          </svg>
+          <div class="kgrp">
+            <h4>Colored buttons</h4>
+            <div class="kr"><span class="pb r cr dot">R</span><span class="kd">Open or close Now Playing</span></div>
+            <div class="kr"><span class="pb r cg dot">G</span><span class="kd">Play / pause</span></div>
+            <div class="kr"><span class="pb r cy dot">Y</span><span class="kd">Previous song</span></div>
+            <div class="kr"><span class="pb r cb dot">B</span><span class="kd">Next song</span></div>
+            <h4>Other buttons</h4>
+            <div class="kr"><span class="pb wide">Arrows</span><span class="pb wide">OK</span><span class="kd">Move the focus, choose</span></div>
+            <div class="kr"><span class="pb wide">Back</span><span class="kd">Go back, close a window</span></div>
+            <div class="kr"><span class="pb wide">&#9664;&#9664;</span><span class="pb wide">&#9654;&#9654;</span><span class="kd">Previous / next song</span></div>
+            <div class="kr"><span class="pb wide">&#9664;</span><span class="pb wide">&#9654;</span><span class="kd">On the seek bar: &minus;<b data-skipb>10</b> s / +<b data-skipf>10</b> s</span></div>
+          </div>
+        </div>
+        <p class="knote">The colored buttons work on every page, even while you type. On some Magic Remotes they are on the number pad that opens with the 123 button.</p>
       </section>
       <section class="kpane" id="kp-pad" hidden>
         <svg class="pad xbox" viewBox="0 0 420 270" role="img" aria-label="Xbox controller">
@@ -2304,7 +2342,7 @@ function fitPanel(ov) {
   const pn = ov && $('.panel', ov); if (!pn || ov.hidden) return;
   pn.style.zoom = '';
   if (ov.id === 'keys') {
-    const ps = $$('.kpane', ov); ps.forEach(x => { x.style.minHeight = ''; });
+    const ps = $$('.kpane', ov).filter(x => (x.id === 'kp-remote') === REAL_TV); ps.forEach(x => { x.style.minHeight = ''; });
     const hid = ps.filter(x => x.hidden); hid.forEach(x => { x.hidden = false; });
     const m = Math.max(...ps.map(x => x.offsetHeight)); hid.forEach(x => { x.hidden = true; });
     ps.forEach(x => { x.style.minHeight = m + 'px'; });
@@ -2322,14 +2360,15 @@ function detectPad() {
 window.addEventListener('gamepadconnected', detectPad);
 function setKeysTab(t) {
   $$('#seg-ktabs button').forEach(b => b.classList.toggle('on', b.dataset.ktab === t));
-  $('#kp-kb').hidden = t !== 'kb'; $('#kp-pad').hidden = t !== 'pad';
+  $('#kp-kb').hidden = t !== 'kb'; $('#kp-pad').hidden = t !== 'pad'; $('#kp-remote').hidden = t !== 'rm';
 }
 function openKeys() {
-  if (REAL_TV || !$('#keys').hidden || !$('#quit').hidden) return;
+  if (!$('#keys').hidden || !$('#quit').hidden) return;
   rememberFocus('keys'); pushOv('keys');
   $$('[data-skipb]').forEach(e => { e.textContent = skipB; }); $$('[data-skipf]').forEach(e => { e.textContent = skipF; });
-  detectPad(); setKeysTab('kb'); $('#keys').hidden = false; fitPanel($('#keys'));
-  const b = $('#seg-ktabs button.on'); if (b) b.focus();
+  $('#keys').classList.toggle('rm', REAL_TV);
+  detectPad(); setKeysTab(REAL_TV ? 'rm' : 'kb'); $('#keys').hidden = false; fitPanel($('#keys'));
+  const b = REAL_TV ? $('#keys [data-act="keys-close"]') : $('#seg-ktabs button.on'); if (b) b.focus();
 }
 function closeKeys(fromPop) {
   if ($('#keys').hidden) return;
@@ -2337,7 +2376,6 @@ function closeKeys(fromPop) {
   if (!fromPop) popOv('keys');
   restoreFocus('keys');
 }
-if (REAL_TV) { const r = $('#btn-keys'); if (r) r.remove(); }
 function closeSettings(fromPop) {
   if ($('#settings').hidden) return;
   $('#settings').hidden = true;
@@ -2364,7 +2402,7 @@ window.addEventListener('popstate', () => {
 
 /* Back: close what's on top, then step back through the app. Only on the sidebar's
    first item does Back reach the TV, which then asks to exit. */
-let backHandled = false, debugKeys = false;
+let backHandled = false, debugKeys = /[?&]debugkeys\b/.test(location.search);   // add ?debugkeys to the address to see the code of every key you press
 const isBackKey = e => e.keyCode === 461 || e.keyCode === 166 || e.keyCode === 27 || e.key === 'GoBack' || e.key === 'BrowserBack' || e.key === 'XF86Back' || e.key === 'Escape';
 /* webOS handles Back through the page history unless appinfo.json says "disableBackHistoryAPI".
    With that on, Back only reaches us as a key press, and leaving the app is our job. */
@@ -2416,6 +2454,11 @@ function onKeyDown(e) {
     const hit = k === 32 ? toggle : k === 37 ? prev : k === 39 ? () => next(false) : k === 13 ? toggleNP : null;
     if (hit) { hit(); e.preventDefault(); e.stopPropagation(); return; }
   }
+  // Colored buttons on the TV remote: red Now Playing, green play / pause, yellow previous, blue next. They work everywhere, even while typing.
+  if (TV && k >= 403 && k <= 406 && !e.ctrlKey && !e.metaKey && !e.altKey && $('#quit').hidden) {
+    const hit = k === 403 ? toggleNP : k === 404 ? toggle : k === 405 ? prev : () => next(false);
+    hit(); e.preventDefault(); e.stopPropagation(); return;
+  }
   // ? or F1 shows the shortcuts (computer version); it never fires while typing
   if (!REAL_TV && (k === 112 || (e.key === '?' && !typing(a) && !(a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) && !(a && a.closest && a.closest('.osk')))) && $('#quit').hidden) {
     e.preventDefault(); e.stopPropagation(); if ($('#keys').hidden) openKeys(); else closeKeys(); return;
@@ -2444,8 +2487,6 @@ function onKeyDown(e) {
     return;
   }
   if (e.defaultPrevented) return;
-  // Yellow button: show the code of every key you press (for troubleshooting remotes)
-  if (TV && k === 405) { debugKeys = !debugKeys; toast(debugKeys ? 'Showing key codes. Press yellow again to stop.' : 'Key codes off.'); e.preventDefault(); return; }
   // Media keys (webOS remote)
   if (e.key === 'MediaTrackNext') { next(false); e.preventDefault(); return; }
   if (e.key === 'MediaTrackPrevious') { prev(); e.preventDefault(); return; }
