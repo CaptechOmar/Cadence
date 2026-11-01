@@ -6,6 +6,8 @@ Cadence talks to any Subsonic or OpenSubsonic server and is designed to be drive
 
 > Cadence is an independent project. It is not affiliated with Apple or Navidrome, and "Apple Music-style" only describes the look.
 
+> **How it was made:** Cadence was written with AI (Claude, by Anthropic) and tested heavily by hand by its maintainer, on a real LG webOS TV and on the desktop. Treat it like any other open-source project: read the code if you care, and report anything that doesn't work.
+
 ## Screenshots
 
 ![Listen Now](docs/screenshots/listen-now.png)
