@@ -13,9 +13,13 @@ Cadence talks to any Subsonic or OpenSubsonic server and is designed to be drive
 ![Album view](docs/screenshots/album-view.png)
 ![Search](docs/screenshots/search.png)
 
-| Settings | Keyboard shortcuts | PlayStation controller | Xbox controller |
-|---|---|---|---|
-| ![Settings](docs/screenshots/settings.png) | ![Keyboard](docs/screenshots/keyboard-shortcuts.png) | ![PS](docs/screenshots/ps-controller-shortcuts.png) | ![Xbox](docs/screenshots/xbox-controller-shortcuts.png) |
+| Settings | Keyboard shortcuts | TV remote shortcuts |
+|---|---|---|
+| ![Settings](docs/screenshots/settings.png) | ![Keyboard](docs/screenshots/keyboard-shortcuts.png) | ![TV remote](docs/screenshots/remote-shortcuts.png) |
+
+| PlayStation controller | Xbox controller |
+|---|---|
+| ![PS](docs/screenshots/ps-controller-shortcuts.png) | ![Xbox](docs/screenshots/xbox-controller-shortcuts.png) |
 
 ## Features
 
