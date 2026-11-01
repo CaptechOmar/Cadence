@@ -9,10 +9,18 @@ Cadence talks to any Subsonic or OpenSubsonic server and is designed to be drive
 > **How it was made:** Cadence was written with AI (Claude, by Anthropic) and tested heavily by hand by its maintainer, on a real LG webOS TV and on the desktop. Treat it like any other open-source project: read the code if you care, and report anything that doesn't work.
 
 ## Screenshots
-
+### Listen Now
 ![Listen Now](docs/screenshots/listen-now.png)
+### Library: Albums
 ![Library albums](docs/screenshots/library-albums.png)
+### Library: Artists
+![Library artists](docs/screenshots/library-artists.png)
+### Album View
 ![Album view](docs/screenshots/album-view.png)
+### Artists View
+|---|---|
+| ![Artist](docs/screenshots/artist-view-1.png) | ![Artist](docs/screenshots/artist-view-2.png) |
+
 ![Search](docs/screenshots/search.png)
 
 | Settings | Keyboard shortcuts | TV remote shortcuts |
