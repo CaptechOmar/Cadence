@@ -13,7 +13,7 @@ Cadence talks to any Subsonic or OpenSubsonic server and is designed to be drive
 ## Screenshots
 ### Listen Now
 ![Listen Now](docs/screenshots/listen-now.png)
-### Listen Now
+### Lyrics
 ![Listen Now](docs/screenshots/lyrics.png)
 ### Library: Albums
 ![Library albums](docs/screenshots/library-albums.png)
