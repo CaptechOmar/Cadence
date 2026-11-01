@@ -17,7 +17,8 @@ Cadence talks to any Subsonic or OpenSubsonic server and is designed to be drive
 ![Library artists](docs/screenshots/library-artists.png)
 ### Album View
 ![Album view](docs/screenshots/album-view.png)
-### Artists View
+### Artist View
+| Artist View  | Artist View |
 |---|---|
 | ![Artist](docs/screenshots/artist-view-1.png) | ![Artist](docs/screenshots/artist-view-2.png) |
 
