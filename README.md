@@ -21,7 +21,7 @@ Cadence talks to any Subsonic or OpenSubsonic server and is designed to be drive
 | Artist View  | Artist View |
 |---|---|
 | ![Artist](docs/screenshots/artist-view-1.png) | ![Artist](docs/screenshots/artist-view-2.png) |
-
+### Search Page
 ![Search](docs/screenshots/search.png)
 
 | Settings | Keyboard shortcuts | TV remote shortcuts |
