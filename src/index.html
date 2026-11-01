@@ -2402,7 +2402,7 @@ window.addEventListener('popstate', () => {
 
 /* Back: close what's on top, then step back through the app. Only on the sidebar's
    first item does Back reach the TV, which then asks to exit. */
-let backHandled = false, debugKeys = /[?&]debugkeys\b/.test(location.search);   // add ?debugkeys to the address to see the code of every key you press
+let backHandled = false;
 const isBackKey = e => e.keyCode === 461 || e.keyCode === 166 || e.keyCode === 27 || e.key === 'GoBack' || e.key === 'BrowserBack' || e.key === 'XF86Back' || e.key === 'Escape';
 /* webOS handles Back through the page history unless appinfo.json says "disableBackHistoryAPI".
    With that on, Back only reaches us as a key press, and leaving the app is our job. */
@@ -2448,7 +2448,6 @@ function goBack() {
 const toggleNP = () => { if (npEl.classList.contains('open')) setNP(false); else if (cur()) setNP(true); else toast('Nothing is playing yet'); };
 function onKeyDown(e) {
   const k = e.keyCode, a = document.activeElement;
-  if (debugKeys) toast('Key ' + k + (e.key ? ' (' + e.key + ')' : ''));
   // Player shortcuts that also work while typing (search, sign-in): Ctrl+Space play/pause, Ctrl+Left / Right previous / next, Ctrl+Enter Now Playing
   if (e.ctrlKey && !e.metaKey && !e.altKey && !e.shiftKey) {
     const hit = k === 32 ? toggle : k === 37 ? prev : k === 39 ? () => next(false) : k === 13 ? toggleNP : null;
