@@ -2,6 +2,8 @@
 
 An Apple Music-style player for your own [Navidrome](https://www.navidrome.org) server, made for the living-room screen.
 
+I wanted to create a good Navidrome app for LG WebOS and for Desktop PC Consoles (Fullscreen with TV and controller naviation in mind) so I decided to build Cadence.
+
 Cadence talks to any Subsonic or OpenSubsonic server and is designed to be driven from across the room: arrow keys, a TV remote or a game controller. It also works fine with a mouse and keyboard on a computer.
 
 > Cadence is an independent project. It is not affiliated with Apple or Navidrome, and "Apple Music-style" only describes the look.
@@ -32,6 +34,10 @@ Cadence talks to any Subsonic or OpenSubsonic server and is designed to be drive
 |---|---|
 | ![PS](docs/screenshots/ps-controller-shortcuts.png) | ![Xbox](docs/screenshots/xbox-controller-shortcuts.png) |
 
+### Quit Menu (For PCs to exit with the controller)
+![Album view](docs/screenshots/quit-menu.png)
+
+
 ## Features
 
 - Listen now, Library (albums, artists, playlists, compilations, genres, songs, composers), Favorites and Search
@@ -43,6 +49,7 @@ Cadence talks to any Subsonic or OpenSubsonic server and is designed to be drive
 - Game controller support, including a PlayStation layout in the shortcuts window
 - Light, dark and automatic themes, selectable streaming quality, adjustable skip steps
 - Hover effects for mouse use, and a keyboard and controller shortcuts window (press `?`)
+- A Quit Menu on the desktop so you can exit the app with the controller
 - One HTML file, no build step and no tracking. Your password is never stored, only a Subsonic token
 
 ## Install
