@@ -6,6 +6,17 @@ Cadence talks to any Subsonic or OpenSubsonic server and is designed to be drive
 
 > Cadence is an independent project. It is not affiliated with Apple or Navidrome, and "Apple Music-style" only describes the look.
 
+## Screenshots
+
+![Listen Now](docs/screenshots/listen-now.png)
+![Library albums](docs/screenshots/library-albums.png)
+![Album view](docs/screenshots/album-view.png)
+![Search](docs/screenshots/search.png)
+
+| Settings | Keyboard shortcuts | PlayStation controller | Xbox controller |
+|---|---|---|---|
+| ![Settings](docs/screenshots/settings.png) | ![Keyboard](docs/screenshots/keyboard-shortcuts.png) | ![PS](docs/screenshots/ps-controller-shortcuts.png) | ![Xbox](docs/screenshots/xbox-controller-shortcuts.png) |
+
 ## Features
 
 - Listen now, Library (albums, artists, playlists, compilations, genres, songs, composers), Favorites and Search
