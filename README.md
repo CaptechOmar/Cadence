@@ -1,0 +1,98 @@
+# Cadence
+
+An Apple Music-style player for your own [Navidrome](https://www.navidrome.org) server, made for the living-room screen.
+
+Cadence talks to any Subsonic or OpenSubsonic server and is designed to be driven from across the room: arrow keys, a TV remote or a game controller. It also works fine with a mouse and keyboard on a computer.
+
+> Cadence is an independent project. It is not affiliated with Apple or Navidrome, and "Apple Music-style" only describes the look.
+
+## Features
+
+- Listen now, Library (albums, artists, playlists, compilations, genres, songs, composers), Favorites and Search
+- Album, artist and playlist pages with top songs and artist links
+- Now Playing with an Up next queue
+- Synced lyrics with animated intro and instrumental dots
+- Search with an on-screen keyboard, recent searches and browse tiles
+- Focus navigation with a lifted, white highlight, like a TV interface
+- Game controller support, including a PlayStation layout in the shortcuts window
+- Light, dark and automatic themes, selectable streaming quality, adjustable skip steps
+- Hover effects for mouse use, and a keyboard and controller shortcuts window (press `?`)
+- One HTML file, no build step and no tracking. Your password is never stored, only a Subsonic token
+
+## Install
+
+Download the latest files from the [Releases](../../releases) page.
+
+| Platform | File | How |
+| --- | --- | --- |
+| **LG webOS TV** | `com.cadence.navidrome_*_all.ipk` | Needs a TV in developer mode or rooted with the Homebrew Channel. `ares-install --device <tv> com.cadence.navidrome_*_all.ipk` |
+| **LG webOS (Homebrew Channel)** | repository link | In Homebrew Channel: Settings, Add repository, then paste `https://captechomar.github.io/Cadence/apps.json` |
+| **Linux (any)** | `Cadence-*-linux-x86_64.AppImage` | `chmod +x` it and run it |
+| **Linux (Flatpak)** | `Cadence.flatpak` | `flatpak install --user ./Cadence.flatpak` |
+| **Windows** | `Cadence-*-windows-portable.exe` | Run it. No installer, and nothing is written outside its own settings folder |
+| **Any browser** | `src/index.html` | Open it, or add `?tv` for the TV layout. The server must allow cross-origin requests |
+
+The desktop apps start full screen. Press `F11` to toggle it, and `Esc` on the first page to get the Quit prompt.
+
+Sign in with your server address, user name and password. For a server behind HTTPS, use the full address, for example `https://music.example.com`.
+
+## Controls
+
+Press `?` or `F1` in the desktop app, or open Settings and choose Shortcuts, to see these in the app.
+
+| Keyboard | Action |
+| --- | --- |
+| `K` or `Ctrl`+`Space` | Play / pause |
+| `,` or `Ctrl`+`←` | Previous song |
+| `.` or `Ctrl`+`→` | Next song |
+| `N` or `Ctrl`+`Enter` | Now Playing |
+| Arrow keys, `Enter`, `Esc` | Move, choose, go back |
+| `←` `→` on the seek bar | Skip back / forward |
+
+| Controller | Action |
+| --- | --- |
+| D-pad or left stick | Move |
+| A (✕) / B (○) | Choose / back |
+| X (□) | Play / pause (delete a letter on Search) |
+| Y (△) or Start | Now Playing (capitals on Search) |
+| LB / RB | Previous / next |
+| LT / RT | Skip back / forward |
+
+## Build from source
+
+You need Node.js 20 or newer.
+
+```sh
+# desktop app (Linux and Windows)
+cd desktop
+npm install
+npm start                # run it
+npm run dist:linux       # AppImage and unpacked app, in desktop/dist
+npm run dist:win         # Windows portable .exe (build it on Windows)
+
+# LG webOS package
+scripts/build-webos.sh   # writes dist/webos/*.ipk
+
+# Flatpak (after dist:linux). Uses your GitHub name to make the app id
+scripts/build-flatpak.sh <github-user>
+```
+
+A tagged release (`v1.2.3`) builds all of these on GitHub Actions and attaches them to the release.
+
+## Project layout
+
+```
+src/index.html   the whole app
+webos/           LG webOS package files
+desktop/         Electron shell for Linux and Windows
+flatpak/         Flatpak manifest and appstream data
+scripts/         build helpers
+```
+
+## Contributing
+
+Issues and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## License
+
+[MIT](LICENSE). The desktop builds include Electron, which is MIT licensed, and Chromium, whose licenses ship inside each build.

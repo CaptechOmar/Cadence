@@ -1,0 +1,10 @@
+node_modules
+dist/
+desktop/app/
+flatpak/out/
+flatpak/build/
+flatpak/repo/
+.flatpak-builder/
+*.flatpak
+*.ipk
+.DS_Store

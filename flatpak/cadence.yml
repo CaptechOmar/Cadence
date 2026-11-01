@@ -1,0 +1,49 @@
+# Flatpak manifest template. scripts/build-flatpak.sh renders it into flatpak/out/ (filling in the app id) and builds it.
+# The app is the Electron build from desktop/ (run `npm run dist:linux` there first),
+# so nothing is compiled or downloaded during the Flatpak build itself.
+app-id: "@APP_ID@"
+runtime: org.freedesktop.Platform
+runtime-version: "24.08"
+sdk: org.freedesktop.Sdk
+base: org.electronjs.Electron2.BaseApp
+base-version: "24.08"
+command: cadence
+separate-locales: false
+
+finish-args:
+  - --share=ipc
+  - --share=network          # reaches your music server
+  - --socket=x11
+  - --socket=wayland
+  - --socket=pulseaudio
+  - --device=dri
+  - --device=all             # game controllers (/dev/input)
+  - --own-name=org.mpris.MediaPlayer2.chromium.*   # media keys and desktop media controls
+
+modules:
+  - name: cadence
+    buildsystem: simple
+    build-commands:
+      - cp -r cadence-app /app/cadence
+      - install -Dm755 cadence.sh /app/bin/cadence
+      - install -Dm644 cadence.desktop /app/share/applications/${FLATPAK_ID}.desktop
+      - install -Dm644 cadence.metainfo.xml /app/share/metainfo/${FLATPAK_ID}.metainfo.xml
+      - install -Dm644 cadence-512.png /app/share/icons/hicolor/512x512/apps/${FLATPAK_ID}.png
+      - install -Dm644 cadence-256.png /app/share/icons/hicolor/256x256/apps/${FLATPAK_ID}.png
+      - install -Dm644 cadence-128.png /app/share/icons/hicolor/128x128/apps/${FLATPAK_ID}.png
+    sources:
+      - type: dir
+        path: ../../desktop/dist/linux-unpacked
+        dest: cadence-app
+      - type: file
+        path: cadence.sh
+      - type: file
+        path: cadence.desktop
+      - type: file
+        path: cadence.metainfo.xml
+      - type: file
+        path: cadence-512.png
+      - type: file
+        path: cadence-256.png
+      - type: file
+        path: cadence-128.png

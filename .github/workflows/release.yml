@@ -1,0 +1,110 @@
+name: Build and release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  webos:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: scripts/build-webos.sh dist/webos
+      - uses: actions/upload-artifact@v4
+        with: { name: webos, path: dist/webos/*.ipk }
+
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm install
+        working-directory: desktop
+      - run: npm run dist:linux
+        working-directory: desktop
+      - name: Keep the unpacked app (with its permissions) for the Flatpak job
+        run: tar czf unpacked.tgz -C desktop/dist linux-unpacked
+      - uses: actions/upload-artifact@v4
+        with: { name: linux, path: desktop/dist/*.AppImage }
+      - uses: actions/upload-artifact@v4
+        with: { name: linux-unpacked, path: unpacked.tgz }
+
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm install
+        working-directory: desktop
+      - run: npm run dist:win
+        working-directory: desktop
+      - uses: actions/upload-artifact@v4
+        with: { name: windows, path: desktop/dist/*-windows-portable.exe }
+
+  flatpak:
+    needs: linux
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-24.08
+      options: --privileged
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { name: linux-unpacked }
+      - name: Unpack the app and fill in the app id
+        id: render
+        run: |
+          mkdir -p desktop/dist
+          tar xzf unpacked.tgz -C desktop/dist
+          echo "id=$(scripts/render-flatpak.sh '${{ github.repository_owner }}')" >> "$GITHUB_OUTPUT"
+      - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          bundle: Cadence.flatpak
+          manifest-path: flatpak/out/${{ steps.render.outputs.id }}.yml
+          cache-key: flatpak-builder-${{ github.sha }}
+      - uses: actions/upload-artifact@v4
+        with: { name: flatpak, path: Cadence.flatpak }
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [webos, linux, windows, flatpak]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          pattern: '{webos,linux,windows,flatpak}'
+          merge-multiple: true
+      - uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: artifacts/*
+
+  homebrew-repo:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: release
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - uses: actions/download-artifact@v4
+        with: { name: webos, path: ipk }
+      - run: node scripts/gen-hbc-repo.mjs ipk/*.ipk "${{ github.repository_owner }}" "${{ github.event.repository.name }}" "${{ github.ref_name }}" site
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: site }
+      - id: deploy
+        uses: actions/deploy-pages@v4

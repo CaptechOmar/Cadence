@@ -1,0 +1,15 @@
+{
+  "id": "com.cadence.navidrome",
+  "version": "2.14.2",
+  "vendor": "Cadence",
+  "type": "web",
+  "main": "index.html",
+  "title": "Cadence",
+  "icon": "icon-v2.png",
+  "largeIcon": "largeIcon-v2.png",
+  "bgColor": "#e4374b",
+  "iconColor": "#e4374b",
+  "resolution": "1920x1080",
+  "disableBackHistoryAPI": true,
+  "splashBackground": "splash.png"
+}

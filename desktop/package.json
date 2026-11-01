@@ -1,0 +1,53 @@
+{
+  "name": "cadence",
+  "version": "2.14.2",
+  "description": "An Apple Music-style player for your Navidrome server, built for TVs and big screens",
+  "author": "Omar Ashraf",
+  "homepage": "https://github.com/CaptechOmar/cadence",
+  "main": "main.js",
+  "license": "MIT",
+  "scripts": {
+    "prepare-app": "node ../scripts/copy-app.mjs",
+    "start": "npm run prepare-app && electron .",
+    "dist:linux": "npm run prepare-app && electron-builder --linux AppImage tar.gz --publish never",
+    "dist:win": "npm run prepare-app && electron-builder --win portable --publish never"
+  },
+  "devDependencies": {
+    "electron": "33.2.1",
+    "electron-builder": "25.1.8"
+  },
+  "build": {
+    "appId": "com.cadence.navidrome.desktop",
+    "productName": "Cadence",
+    "files": [
+      "main.js",
+      "icon.png",
+      "app/**"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "tar.gz"
+      ],
+      "category": "AudioVideo",
+      "icon": "icon.png",
+      "artifactName": "Cadence-${version}-linux-x86_64.${ext}"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "icon.png",
+      "artifactName": "Cadence-${version}-windows-portable.${ext}"
+    }
+  },
+  "repository": "github:CaptechOmar/cadence"
+}
