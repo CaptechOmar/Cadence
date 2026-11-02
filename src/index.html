@@ -215,6 +215,13 @@ select.sel option{color:#111;background:#fff}
 .card.round .art{border-radius:50%}
 .card.round .t,.card.round .s{text-align:center}
 .aw{position:relative}
+/* Internet radio stations: a colored tile with a radio, no cover art */
+button.art{border:0;padding:0;width:100%;color:inherit;font:inherit;cursor:pointer}
+.art.rad svg{width:42%;height:42%;color:#fff;opacity:.95;filter:drop-shadow(0 2px 6px rgba(0,0,0,.25))}
+.live-dot{display:inline-block;width:.5rem;height:.5rem;border-radius:50%;background:var(--accent);margin-right:.4rem;vertical-align:.05em}
+/* While a radio station plays there is nothing to seek, shuffle, repeat, favorite or read along with */
+.is-radio .np-bar .seek,.is-radio [data-act="shuffle"],.is-radio [data-act="repeat"],.is-radio #np-heart,.is-radio #np-lyrics{display:none!important}
+.is-radio .np-bar{justify-content:center}
 .pbtn{
   position:absolute;left:.55rem;bottom:.55rem;width:2.3rem;height:2.3rem;border-radius:50%;
   background:var(--glass);color:var(--accent);display:grid;place-items:center;
@@ -680,6 +687,7 @@ kbd{display:inline-flex;align-items:center;justify-content:center;min-width:2rem
   <symbol id="i-lists" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15V6M12 12H3M16 6H3M12 18H3"/><circle cx="18.5" cy="15" r="2.5"/></g></symbol>
   <symbol id="i-keyboard" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5.5" width="19" height="13" rx="2.6"/><path d="M6.5 10h.01M10 10h.01M14 10h.01M17.5 10h.01M7 14.5h10"/></g></symbol>
   <symbol id="i-sliders" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></g></symbol>
+<symbol id="i-radio" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="12" rx="2.5"/><path d="M7 8L17 3"/><circle cx="9" cy="14" r="2.6"/><path d="M15 12.5h3M15 15.5h3"/></g></symbol>
 <symbol id="i-note" viewBox="100 90 304 346"><g fill="currentColor"><path d="M194 148 L388 104 V166 L194 210 Z"/><rect x="194" y="148" width="30" height="232"/><rect x="358" y="125" width="30" height="223"/><ellipse cx="170" cy="376" rx="58" ry="47" transform="rotate(-20 170 376)"/><ellipse cx="334" cy="344" rx="58" ry="47" transform="rotate(-20 334 344)"/></g></symbol>
 </svg>
 
@@ -1089,13 +1097,14 @@ function loadAt(i, autoplay = true) {
   if (i < 0 || i >= P.queue.length) return;
   P.i = i; P.scrobbled = false;
   const s = P.queue[i];
-  audio.src = streamUrl(s.id);
+  audio.src = s.radio ? s.streamUrl : streamUrl(s.id);
   if (autoplay) { const p = audio.play(); if (p && p.catch) p.catch(() => {}); }
   paintMeta(); markCurrent(); renderQueue();
-  api('scrobble', { id: s.id, submission: false }).catch(() => {});
+  if (!s.radio) api('scrobble', { id: s.id, submission: false }).catch(() => {});
 }
 function next(auto) {
   if (!P.queue.length) return;
+  if (cur() && cur().radio) { if (!auto) loadAt((P.i + 1) % P.queue.length); return; }   // stations: Next moves to the next station; a stream never "ends" into one
   if (auto && P.repeat === 'one') { audio.currentTime = 0; audio.play().catch(() => {}); return; }
   if (P.i + 1 < P.queue.length) loadAt(P.i + 1);
   else if (P.repeat === 'all') loadAt(0);
@@ -1103,6 +1112,7 @@ function next(auto) {
 }
 function prev() {
   if (!P.queue.length) return;
+  if (cur() && cur().radio) { loadAt((P.i - 1 + P.queue.length) % P.queue.length); return; }
   if (audio.currentTime > 3) { audio.currentTime = 0; return; }
   if (P.i > 0) loadAt(P.i - 1);
   else if (P.repeat === 'all') loadAt(P.queue.length - 1);
@@ -1145,8 +1155,10 @@ function paintMeta() {
   $$('.js-title').forEach(e => { e.textContent = s ? s.title : 'Not playing'; });
   $$('.js-sub').forEach(e => { e.textContent = s ? s.artist || '' : ''; });
   $$('.js-album').forEach(e => { e.textContent = s ? s.album || '' : ''; });
-  $$('.js-art').forEach(e => setArt(e, s ? coverUrl(s.coverArt || s.id, e.closest('.np') ? 800 : 160) : ''));
-  $('#np-bg').style.backgroundImage = s && (s.coverArt || s.id) ? `url("${coverUrl(s.coverArt || s.id, 200)}")` : '';
+  document.body.classList.toggle('is-radio', !!(s && s.radio));
+  $$('.np-art .ph use, .js-art + .ph use').forEach(u => u.setAttribute('href', s && s.radio ? '#i-radio' : '#i-note'));
+  $$('.js-art').forEach(e => setArt(e, s && !s.radio ? coverUrl(s.coverArt || s.id, e.closest('.np') ? 800 : 160) : ''));
+  $('#np-bg').style.backgroundImage = s && !s.radio && (s.coverArt || s.id) ? `url("${coverUrl(s.coverArt || s.id, 200)}")` : '';
   document.title = s ? `${s.title} · ${s.artist}` : 'Cadence';
   setHeart(!!s && stars.has(s.id));
   if (inLyrics()) renderLyrics();
@@ -1165,8 +1177,9 @@ function dur() { return isFinite(audio.duration) && audio.duration > 0 ? audio.d
 function paintProgress() {
   const d = dur(), t = audio.currentTime || 0;
   const frac = d ? Math.min(1, t / d) : 0;
-  $$('.js-cur').forEach(e => { e.textContent = fmt(t); });
-  $$('.js-dur').forEach(e => { e.textContent = fmt(d); });
+  const live = !!(cur() && cur().radio);
+  $$('.js-cur').forEach(e => { e.innerHTML = live ? '<i class="live-dot"></i>LIVE' : fmt(t); });
+  $$('.js-dur').forEach(e => { e.textContent = live ? '' : fmt(d); });
   if (!dragging) setSeek(frac);
   syncLyrics();
 }
@@ -1185,16 +1198,17 @@ audio.addEventListener('pause', () => document.body.classList.remove('is-playing
 audio.addEventListener('timeupdate', () => {
   paintProgress();
   const s = cur();
-  if (s && !P.scrobbled && audio.currentTime > Math.min(dur() * 0.5, 240) && audio.currentTime > 15) {
+  if (s && !s.radio && !P.scrobbled && audio.currentTime > Math.min(dur() * 0.5, 240) && audio.currentTime > 15) {
     P.scrobbled = true; api('scrobble', { id: s.id, submission: true }).catch(() => {});
   }
 });
 audio.addEventListener('loadedmetadata', paintProgress);
 setInterval(() => { if (!audio.paused) paintProgress(); }, 250);
 audio.addEventListener('playing', () => { P.errors = 0; });
-audio.addEventListener('ended', () => next(true));
+audio.addEventListener('ended', () => { if (cur() && cur().radio) { toast('The station stopped. Press play to try again.'); return; } next(true); });
 audio.addEventListener('error', () => {
   if (!audio.getAttribute('src')) return;
+  if (cur() && cur().radio) { toast("Couldn't play this station. It may be offline."); return; }
   P.errors++;
   if (P.errors <= 2 && P.i + 1 < P.queue.length) { toast("Couldn't play that track. Skipping."); setTimeout(() => next(false), 600); }
   else toast("Couldn't play this track. Check the server or try a lower streaming quality in Settings.");
@@ -1237,7 +1251,7 @@ function renderQueue() {
   if (!P.queue.length) { list.innerHTML = '<div class="q-empty">Nothing is queued. Play an album or song to start.</div>'; return; }
   list.innerHTML = P.queue.map((s, i) => `
     <div class="qi${i === P.i ? ' cur' : ''}${i < P.i ? ' past' : ''}" data-qi="${i}" tabindex="0" role="button" aria-label="Play ${esc(s.title)}">
-      <span class="qa"><img loading="lazy" alt="" src="${coverUrl(s.coverArt || s.id, 80)}" onerror="this.remove()"></span>
+      <span class="qa">${s.radio ? '' : `<img loading="lazy" alt="" src="${coverUrl(s.coverArt || s.id, 80)}" onerror="this.remove()">`}</span>
       <span class="qt"><b>${esc(s.title)}</b><small>${esc(s.artist)}</small></span>
     </div>`).join('');
   const c = $('.qi.cur', list);
@@ -1471,9 +1485,12 @@ async function viewListen(my) {
   const res = await Promise.all(kinds.map(t => api('getAlbumList2', { type: t, size: 20 }).then(r => (r.albumList2 && r.albumList2.album) || [])));
   if (!alive(my)) return;
   const rows = [['Recently played', res[0]], ['Recently added', res[1]], ['Most played', res[2]], ['Random picks', res[3]]].filter(r => r[1].length);
-  if (!rows.length) { view.innerHTML = empty('Your library is empty', 'Add music to Navidrome and let it finish scanning, then come back.'); return; }
+  const radios = await loadRadios(true);
+  if (!alive(my)) return;
+  if (!rows.length && !radios.length) { view.innerHTML = empty('Your library is empty', 'Add music to Navidrome and let it finish scanning, then come back.'); return; }
   view.innerHTML = '<h1 class="h1">Listen now</h1>' + rows.map(([t, a]) =>
-    `<section><h2 class="h2">${t}</h2><div class="row">${a.map(albumCard).join('')}</div></section>`).join('');
+    `<section><h2 class="h2">${t}</h2><div class="row">${a.map(albumCard).join('')}</div></section>`).join('') +
+    (radios.length ? `<section><h2 class="h2">Radio</h2><div class="row">${radios.map(radioCard).join('')}</div></section>` : '');
 }
 
 /* ----- Albums (sortable, paged) ----- */
@@ -1545,6 +1562,38 @@ async function viewArtists(my) {
 }
 
 /* ----- Library: list on the left, shelf on the right ----- */
+/* ----- Internet radio: only shown when the Navidrome server has stations ----- */
+let RADIOS = null, radiosAt = 0;
+async function loadRadios(force) {
+  if (RADIOS && !force && Date.now() - radiosAt < 60000) return RADIOS;
+  try {
+    const r = await api('getInternetRadioStations');
+    RADIOS = ((r.internetRadioStations && r.internetRadioStations.internetRadioStation) || [])
+      .filter(x => x && x.streamUrl)
+      .map(x => ({ id: 'radio-' + x.id, title: x.name || 'Radio station', artist: 'Internet radio', album: '', radio: true, streamUrl: x.streamUrl, homePageUrl: x.homePageUrl || '', duration: 0 }));
+  } catch (e) { RADIOS = []; }
+  radiosAt = Date.now();
+  return RADIOS;
+}
+const radioHue = n => { let h = 0; for (const c of String(n)) h = (h * 31 + c.charCodeAt(0)) % 360; return h; };
+function radioCard(r, i) {
+  const h = radioHue(r.title), host = (r.homePageUrl || '').replace(/^https?:\/\/(www\.)?/i, '').replace(/[\/?#].*$/, '');
+  return `<div class="card">
+    <div class="aw"><button type="button" class="art rad" data-act="radio-play" data-i="${i}" aria-label="Play ${esc(r.title)}" style="background:linear-gradient(145deg,hsl(${h} 68% 52%),hsl(${(h + 35) % 360} 70% 36%))"><svg class="i"><use href="#i-radio"/></svg></button>
+    <button class="pbtn" data-act="radio-play" data-i="${i}" tabindex="-1" aria-label="Play ${esc(r.title)}"><svg class="i"><use href="#i-play"/></svg></button></div>
+    <span class="t">${esc(r.title)}</span><span class="s">${esc(host || 'Live radio')}</span>
+  </div>`;
+}
+async function viewRadios(my) {
+  const list = await loadRadios(true);
+  if (!alive(my)) return;
+  if (!list.length) { host.innerHTML = '<h1 class="h1">Radios</h1>' + empty('No radio stations', 'Add internet radio stations in Navidrome and they show up here.'); return; }
+  host.innerHTML = '<h1 class="h1">Radios</h1><div class="grid">' + list.map(radioCard).join('') + '</div>';
+}
+function playRadio(i) {
+  if (!RADIOS || !RADIOS[i]) return;
+  P.orig = null; P.queue = RADIOS.slice(); loadAt(i); syncModes();   // stations keep their order: Previous / Next walk the list
+}
 const LIB = [['albums', 'Albums'], ['artists', 'Artists'], ['songs', 'Songs'], ['playlists', 'Playlists'], ['composers', 'Composers'], ['compilations', 'Compilations']];
 let GENRES = null;
 const libHref = (cat, arg) => '#/library/' + cat + (arg ? '/' + enc(arg) : '');
@@ -1618,10 +1667,11 @@ async function viewComposers(my) {
 async function viewLibrary(my, cat, arg) {
   cat = cat || 'albums';
   if (view.dataset.kind !== 'library') {
+    await loadRadios();
     if (!GENRES) { try { const r = await api('getGenres'); GENRES = ((r.genres && r.genres.genre) || []).filter(g => g.value).map(g => g.value).sort((a, b) => a.localeCompare(b)); } catch (e) { GENRES = []; } }
     if (!alive(my)) return;
     view.innerHTML = '<div class="lib"><nav class="lib-nav" id="lib-nav" aria-label="Library">' +
-      LIB.map(([k, t]) => `<a class="lib-i" href="${libHref(k)}" data-k="${k}">${t}</a>`).join('') +
+      LIB.concat(RADIOS && RADIOS.length ? [['radios', 'Radios']] : []).map(([k, t]) => `<a class="lib-i" href="${libHref(k)}" data-k="${k}">${t}</a>`).join('') +
       (GENRES.length ? '<div class="lib-h">Genre</div>' + GENRES.map(g => `<a class="lib-i" href="${libHref('genre', g)}" data-k="genre/${esc(g)}">${esc(g)}</a>`).join('') : '') +
       '</nav><div class="lib-pane" id="lib-pane"></div></div>';
     view.dataset.kind = 'library';
@@ -1638,6 +1688,7 @@ async function viewLibrary(my, cat, arg) {
   else if (cat === 'playlists') await viewPlaylists(my);
   else if (cat === 'composers') await viewComposers(my);
   else if (cat === 'compilations') await viewCompilations(my);
+  else if (cat === 'radios') await viewRadios(my);
   else if (cat === 'genre') await viewAlbums(my, 'byGenre', { title: arg, params: { genre: arg } });
   else await viewAlbums(my);
 }
@@ -2043,7 +2094,7 @@ document.addEventListener('click', e => {
     case 'shuffle': toggleShuffle(); break;
     case 'repeat': cycleRepeat(); break;
     case 'queue': setQueue(!queueOpen()); break;
-    case 'lyrics': setLyrics(!inLyrics()); break;
+    case 'lyrics': if (cur() && cur().radio) break; setLyrics(!inLyrics()); break;
     case 'queue-close': setQueue(false); break;
     case 'quit-cancel': closeQuit(); break;
     case 'quit-confirm': quitNow(); break;
@@ -2051,6 +2102,7 @@ document.addEventListener('click', e => {
     case 'np': if (!cur()) { toast('Nothing is playing yet'); break; } setNP(true); break;
     case 'np-close': setNP(false); break;
     case 'play-album': playAlbumById(t.dataset.id); break;
+    case 'radio-play': playRadio(+t.dataset.i); break;
     case 'play-list': { const L = LISTS[t.dataset.list]; if (L) playList(L, 0); break; }
     case 'shuffle-list': { const L = LISTS[t.dataset.list]; if (L) playList(L, 0, true); break; }
     case 'queue-add': { const L = LISTS[t.dataset.list]; if (L) addToQueue(L[+t.dataset.i]); break; }
@@ -2106,7 +2158,7 @@ function showLogin(msg) {
 }
 function signOut(msg) {
   audio.pause(); audio.removeAttribute('src'); audio.load();
-  P.queue = []; P.i = -1; P.orig = null; paintMeta(); setQueue(false); setNP(false);
+  RADIOS = null; P.queue = []; P.i = -1; P.orig = null; paintMeta(); setQueue(false); setNP(false);
   if (!$('#settings').hidden) closeSettings();
   store.del('cadence.cfg');
   const server = cfg && cfg.server; cfg = server ? { server } : null;
@@ -2594,7 +2646,7 @@ window.addEventListener('keyup', e => {
       pulse('select', b(8), () => { if (onSearch) oskPress('space', true); }, onSearch);
       pulse('lb', b(4), () => prev(), false);
       pulse('rb', b(5), () => next(false), false);
-      pulse('lt', b(6), () => { audio.currentTime = Math.max(0, (audio.currentTime || 0) - skipB); paintProgress(); }, true);
+      pulse('lt', b(6), () => { if (cur() && cur().radio) return; audio.currentTime = Math.max(0, (audio.currentTime || 0) - skipB); paintProgress(); }, true);
       pulse('rt', b(7), () => { const d = dur(); if (d) { audio.currentTime = Math.min(d, (audio.currentTime || 0) + skipF); paintProgress(); } }, true);
     }
     requestAnimationFrame(tick);
@@ -2608,7 +2660,7 @@ window.addEventListener('keyup', e => {
 /* ---------- start ---------- */
 function start() {
   $('#login').hidden = true; $('#app').hidden = false;
-  syncModes(); paintMeta();
+  syncModes(); paintMeta(); loadRadios();
   route();
   if (TV) setTimeout(() => { const f = $('#nav a.on') || $('#nav a'); if (f) f.focus(); }, 60);
 }

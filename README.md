@@ -47,6 +47,7 @@ Cadence talks to any Subsonic or OpenSubsonic server and is designed to be drive
 - Now Playing with an Up next queue
 - Synced lyrics with animated intro and instrumental dots
 - Search with an on-screen keyboard, recent searches and browse tiles
+- Internet radio: stations you add in Navidrome appear in the Library (Radios) and on Listen now. Nothing shows if you have none.
 - Focus navigation with a lifted, white highlight, like a TV interface
 - Game controller support, including a PlayStation layout in the shortcuts window
 - Light, dark and automatic themes, selectable streaming quality, adjustable skip steps
