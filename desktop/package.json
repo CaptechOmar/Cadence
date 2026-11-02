@@ -1,6 +1,6 @@
 {
   "name": "cadence",
-  "version": "2.16.0-beta.1",
+  "version": "2.16.0-beta.2",
   "description": "An Apple Music-style player for your Navidrome server, built for TVs and big screens",
   "author": "Omar Ashraf",
   "homepage": "https://github.com/CaptechOmar/cadence",

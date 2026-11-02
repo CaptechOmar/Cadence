@@ -222,6 +222,12 @@ button.art{border:0;padding:0;width:100%;color:inherit;font:inherit;cursor:point
 /* While a radio station plays there is nothing to seek, shuffle, repeat, favorite or read along with */
 .is-radio .np-bar .seek,.is-radio [data-act="shuffle"],.is-radio [data-act="repeat"],.is-radio #np-heart,.is-radio #np-lyrics{display:none!important}
 .is-radio .np-bar{justify-content:center}
+/* The full-screen player for a station: a bright background in the station's own colors, drifting slowly while it plays */
+.is-radio .np-bg{filter:blur(46px) saturate(1.35) brightness(.92)}
+.is-radio.is-playing .np-bg{animation:radiodrift 16s ease-in-out infinite alternate}
+@keyframes radiodrift{from{transform:translateZ(0) scale(1.05) rotate(0deg)}to{transform:translateZ(0) scale(1.22) rotate(14deg)}}
+.is-radio .np-art{color:#fff}
+.is-radio .np-art .ph{color:#fff;opacity:1;width:42%;height:42%;filter:drop-shadow(0 3px 10px rgba(0,0,0,.3))}
 .pbtn{
   position:absolute;left:.55rem;bottom:.55rem;width:2.3rem;height:2.3rem;border-radius:50%;
   background:var(--glass);color:var(--accent);display:grid;place-items:center;
@@ -1158,7 +1164,8 @@ function paintMeta() {
   document.body.classList.toggle('is-radio', !!(s && s.radio));
   $$('.np-art .ph use, .js-art + .ph use').forEach(u => u.setAttribute('href', s && s.radio ? '#i-radio' : '#i-note'));
   $$('.js-art').forEach(e => setArt(e, s && !s.radio ? coverUrl(s.coverArt || s.id, e.closest('.np') ? 800 : 160) : ''));
-  $('#np-bg').style.backgroundImage = s && !s.radio && (s.coverArt || s.id) ? `url("${coverUrl(s.coverArt || s.id, 200)}")` : '';
+  $('#np-bg').style.backgroundImage = s && s.radio ? radioBackdrop(s.title) : s && (s.coverArt || s.id) ? `url("${coverUrl(s.coverArt || s.id, 200)}")` : '';
+  $$('.np-art').forEach(e => { e.style.background = s && s.radio ? radioTile(s.title) : ''; });
   document.title = s ? `${s.title} · ${s.artist}` : 'Cadence';
   setHeart(!!s && stars.has(s.id));
   if (inLyrics()) renderLyrics();
@@ -1575,11 +1582,13 @@ async function loadRadios(force) {
   radiosAt = Date.now();
   return RADIOS;
 }
+const radioTile = n => { const h = radioHue(n); return `linear-gradient(145deg,hsl(${h} 68% 52%),hsl(${(h + 35) % 360} 70% 36%))`; };
+const radioBackdrop = n => { const h = radioHue(n); return `radial-gradient(circle at 20% 25%,hsl(${h} 85% 58%),transparent 55%),radial-gradient(circle at 80% 30%,hsl(${(h + 70) % 360} 85% 55%),transparent 55%),radial-gradient(circle at 55% 85%,hsl(${(h + 150) % 360} 80% 50%),transparent 60%),linear-gradient(hsl(${(h + 30) % 360} 60% 30%),hsl(${(h + 30) % 360} 60% 30%))`; };
 const radioHue = n => { let h = 0; for (const c of String(n)) h = (h * 31 + c.charCodeAt(0)) % 360; return h; };
 function radioCard(r, i) {
-  const h = radioHue(r.title), host = (r.homePageUrl || '').replace(/^https?:\/\/(www\.)?/i, '').replace(/[\/?#].*$/, '');
+  const host = (r.homePageUrl || '').replace(/^https?:\/\/(www\.)?/i, '').replace(/[\/?#].*$/, '');
   return `<div class="card">
-    <div class="aw"><button type="button" class="art rad" data-act="radio-play" data-i="${i}" aria-label="Play ${esc(r.title)}" style="background:linear-gradient(145deg,hsl(${h} 68% 52%),hsl(${(h + 35) % 360} 70% 36%))"><svg class="i"><use href="#i-radio"/></svg></button>
+    <div class="aw"><button type="button" class="art rad" data-act="radio-play" data-i="${i}" aria-label="Play ${esc(r.title)}" style="background:${radioTile(r.title)}"><svg class="i"><use href="#i-radio"/></svg></button>
     <button class="pbtn" data-act="radio-play" data-i="${i}" tabindex="-1" aria-label="Play ${esc(r.title)}"><svg class="i"><use href="#i-play"/></svg></button></div>
     <span class="t">${esc(r.title)}</span><span class="s">${esc(host || 'Live radio')}</span>
   </div>`;

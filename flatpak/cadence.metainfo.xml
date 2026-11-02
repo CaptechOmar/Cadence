@@ -27,6 +27,7 @@
     <control>gamepad</control>
   </supports>
   <releases>
+    <release version="2.16.0-beta.2" type="development" date="2026-11-02"/>
     <release version="2.16.0-beta.1" type="development" date="2026-11-02"/>
     <release version="2.15.1" date="2026-11-01"/>
     <release version="2.15.0" date="2026-11-01"/>
