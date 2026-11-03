@@ -223,7 +223,9 @@ button.art{border:0;padding:0;width:100%;color:inherit;font:inherit;cursor:point
 .is-radio .np-bar .seek,.is-radio [data-act="shuffle"],.is-radio [data-act="repeat"],.is-radio #np-heart,.is-radio #np-lyrics{display:none!important}
 .is-radio .np-bar{justify-content:center}
 /* The full-screen player for a station: a bright background in the station's own colors, drifting slowly while it plays */
-.is-radio .np-bg{filter:none}   /* the gradients are already soft, so no blur is needed (a big blur is very heavy for a TV's graphics chip) */
+.is-radio .np-bg{filter:none;background-size:100% 100%}
+.realtv .is-radio .np-bg{inset:0}
+html.realtv body.is-radio .np-art{box-shadow:0 10px 22px rgba(0,0,0,.35)!important;transition:transform .55s cubic-bezier(.3,1.35,.5,1)}   /* a lighter shadow: the big soft one is costly on a TV */   /* the gradients are already soft, so no blur is needed (a big blur is very heavy for a TV's graphics chip) */
 html:not(.realtv) .is-radio.is-playing .np-bg{animation:radiodrift 16s ease-in-out infinite alternate}   /* the slow drift runs on computers only */
 @keyframes radiodrift{from{transform:translateZ(0) scale(1.05) rotate(0deg)}to{transform:translateZ(0) scale(1.22) rotate(14deg)}}
 .is-radio .np-art{color:#fff}
@@ -1587,7 +1589,24 @@ async function loadRadios(force) {
   return RADIOS;
 }
 const radioTile = n => { const h = radioHue(n); return `linear-gradient(145deg,hsl(${h} 68% 52%),hsl(${(h + 35) % 360} 70% 36%))`; };
-const radioBackdrop = n => { const h = radioHue(n); return `radial-gradient(circle at 20% 25%,hsl(${h} 85% 58%),transparent 55%),radial-gradient(circle at 80% 30%,hsl(${(h + 70) % 360} 85% 55%),transparent 55%),radial-gradient(circle at 55% 85%,hsl(${(h + 150) % 360} 80% 50%),transparent 60%),linear-gradient(hsl(${(h + 30) % 360} 60% 30%),hsl(${(h + 30) % 360} 60% 30%))`; };
+const radioPics = {};
+function radioBackdrop(n) {
+  if (radioPics[n]) return radioPics[n];
+  const h = radioHue(n);
+  try {
+    const W = 64, H = 36, c = document.createElement('canvas'); c.width = W; c.height = H;
+    const g = c.getContext('2d');
+    g.fillStyle = `hsl(${(h + 30) % 360},60%,30%)`; g.fillRect(0, 0, W, H);
+    [[.2, .25, h, 58, .55], [.8, .3, (h + 70) % 360, 55, .55], [.55, .85, (h + 150) % 360, 50, .6]].forEach(([x, y, hue, l, r]) => {
+      const rg = g.createRadialGradient(x * W, y * H, 0, x * W, y * H, r * W);
+      rg.addColorStop(0, `hsla(${hue},85%,${l}%,1)`); rg.addColorStop(1, `hsla(${hue},85%,${l}%,0)`);
+      g.fillStyle = rg; g.fillRect(0, 0, W, H);
+    });
+    return (radioPics[n] = `url("${c.toDataURL('image/png')}")`);
+  } catch (e) {
+    return (radioPics[n] = `linear-gradient(145deg,hsl(${h},70%,50%),hsl(${(h + 70) % 360},70%,40%),hsl(${(h + 150) % 360},65%,35%))`);
+  }
+}
 const radioHue = n => { let h = 0; for (const c of String(n)) h = (h * 31 + c.charCodeAt(0)) % 360; return h; };
 function radioCard(r, i) {
   const host = (r.homePageUrl || '').replace(/^https?:\/\/(www\.)?/i, '').replace(/[\/?#].*$/, '');
