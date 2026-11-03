@@ -225,6 +225,9 @@ button.art{border:0;padding:0;width:100%;color:inherit;font:inherit;cursor:point
 /* The full-screen player for a station: a bright background in the station's own colors, drifting slowly while it plays */
 .is-radio .np-bg{filter:none;background-size:100% 100%}
 .realtv .is-radio .np-bg{inset:0}
+html.realtv .np-bg{filter:none;inset:0}
+html.realtv .np-bg canvas{position:absolute;left:0;top:0;width:100%;height:100%;display:block}
+html.realtv body.is-radio .np-bg canvas{display:none}
 html.realtv body.is-radio .np-art{box-shadow:0 10px 22px rgba(0,0,0,.35)!important;transition:transform .55s cubic-bezier(.3,1.35,.5,1)}   /* a lighter shadow: the big soft one is costly on a TV */   /* the gradients are already soft, so no blur is needed (a big blur is very heavy for a TV's graphics chip) */
 html:not(.realtv) .is-radio.is-playing .np-bg{animation:radiodrift 16s ease-in-out infinite alternate}   /* the slow drift runs on computers only */
 @keyframes radiodrift{from{transform:translateZ(0) scale(1.05) rotate(0deg)}to{transform:translateZ(0) scale(1.22) rotate(14deg)}}
@@ -1167,7 +1170,8 @@ function paintMeta() {
   document.body.classList.toggle('is-radio', !!(s && s.radio));
   $$('.np-art .ph use, .js-art + .ph use').forEach(u => u.setAttribute('href', s && s.radio ? '#i-radio' : '#i-note'));
   $$('.js-art').forEach(e => setArt(e, s && !s.radio ? coverUrl(s.coverArt || s.id, e.closest('.np') ? 800 : 160) : ''));
-  $('#np-bg').style.backgroundImage = s && s.radio ? radioBackdrop(s.title) : s && (s.coverArt || s.id) ? `url("${coverUrl(s.coverArt || s.id, 200)}")` : '';
+  $('#np-bg').style.backgroundImage = s && s.radio ? radioBackdrop(s.title) : s && (s.coverArt || s.id) ? REAL_TV ? '' : `url("${coverUrl(s.coverArt || s.id, 200)}")` : '';
+  softBackdrop(s && !s.radio && (s.coverArt || s.id) ? coverUrl(s.coverArt || s.id, 64) : '');
   $$('.np-art').forEach(e => { e.style.background = s && s.radio ? radioTile(s.title) : ''; });
   document.title = s ? `${s.title} · ${s.artist}` : 'Couchtunes';
   setHeart(!!s && stars.has(s.id));
@@ -1589,6 +1593,32 @@ async function loadRadios(force) {
   return RADIOS;
 }
 const radioTile = n => { const h = radioHue(n); return `linear-gradient(145deg,hsl(${h} 68% 52%),hsl(${(h + 35) % 360} 70% 36%))`; };
+/* TV only: the song player's backdrop is drawn into a small canvas (a few cheap smoothing steps, once per song)
+   and stretched by the TV, instead of a 60 px blur filter over a screen-sized layer. */
+let softUrl = '';
+function softBackdrop(url) {
+  if (!REAL_TV) return;
+  const host = $('#np-bg'); if (!host) return;
+  let cv = host.querySelector('canvas');
+  if (!cv) { cv = document.createElement('canvas'); cv.width = 256; cv.height = 144; host.appendChild(cv); }
+  softUrl = url;
+  if (!url) { cv.getContext('2d').clearRect(0, 0, 256, 144); return; }
+  const img = new Image();
+  img.onload = () => {
+    if (softUrl !== url) return;                       // another song started meanwhile
+    try {
+      const mk = (w, h) => { const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d'); g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high'; return [c, g]; };
+      const [a, ga] = mk(14, 8); ga.drawImage(img, 0, 0, 14, 8);
+      const [b, gb] = mk(56, 32); gb.drawImage(a, 0, 0, 56, 32);
+      const g = cv.getContext('2d'); g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high';
+      g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1; g.drawImage(b, 0, 0, 256, 144);
+      g.globalCompositeOperation = 'overlay'; g.globalAlpha = .55; g.drawImage(b, 0, 0, 256, 144);   // a little extra color, like the saturation boost of the blurred version
+      g.globalCompositeOperation = 'source-over'; g.globalAlpha = .36; g.fillStyle = '#000'; g.fillRect(0, 0, 256, 144);   // darken
+      g.globalAlpha = 1;
+    } catch (e) {}
+  };
+  img.src = url;
+}
 const radioPics = {};
 function radioBackdrop(n) {
   if (radioPics[n]) return radioPics[n];
