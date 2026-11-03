@@ -223,8 +223,8 @@ button.art{border:0;padding:0;width:100%;color:inherit;font:inherit;cursor:point
 .is-radio .np-bar .seek,.is-radio [data-act="shuffle"],.is-radio [data-act="repeat"],.is-radio #np-heart,.is-radio #np-lyrics{display:none!important}
 .is-radio .np-bar{justify-content:center}
 /* The full-screen player for a station: a bright background in the station's own colors, drifting slowly while it plays */
-.is-radio .np-bg{filter:blur(46px) saturate(1.35) brightness(.92)}
-.is-radio.is-playing .np-bg{animation:radiodrift 16s ease-in-out infinite alternate}
+.is-radio .np-bg{filter:none}   /* the gradients are already soft, so no blur is needed (a big blur is very heavy for a TV's graphics chip) */
+html:not(.realtv) .is-radio.is-playing .np-bg{animation:radiodrift 16s ease-in-out infinite alternate}   /* the slow drift runs on computers only */
 @keyframes radiodrift{from{transform:translateZ(0) scale(1.05) rotate(0deg)}to{transform:translateZ(0) scale(1.22) rotate(14deg)}}
 .is-radio .np-art{color:#fff}
 .is-radio .np-art .ph{color:#fff;opacity:1;width:42%;height:42%;filter:drop-shadow(0 3px 10px rgba(0,0,0,.3))}
@@ -974,6 +974,7 @@ const store = {
   del(k) { try { localStorage.removeItem(k); } catch (e) {} }
 };
 const REAL_TV = /Web0S|webOS|SMART-TV|NetCast/i.test(navigator.userAgent);
+if (REAL_TV) document.documentElement.classList.add('realtv');
 const TV = REAL_TV || /[?&]tv\b/.test(location.search);
 document.documentElement.classList.toggle('tv', TV);
 
@@ -1185,8 +1186,11 @@ function paintProgress() {
   const d = dur(), t = audio.currentTime || 0;
   const frac = d ? Math.min(1, t / d) : 0;
   const live = !!(cur() && cur().radio);
-  $$('.js-cur').forEach(e => { e.innerHTML = live ? '<i class="live-dot"></i>LIVE' : fmt(t); });
-  $$('.js-dur').forEach(e => { e.textContent = live ? '' : fmt(d); });
+  $$('.js-cur').forEach(e => {
+    if (live) { if (e.getAttribute('data-live') !== '1') { e.setAttribute('data-live', '1'); e.innerHTML = '<i class="live-dot"></i>LIVE'; } }   // set once: rebuilding it four times a second made the TV stutter
+    else { if (e.getAttribute('data-live')) e.removeAttribute('data-live'); e.textContent = fmt(t); }
+  });
+  $$('.js-dur').forEach(e => { const v = live ? '' : fmt(d); if (e.textContent !== v) e.textContent = v; });
   if (!dragging) setSeek(frac);
   syncLyrics();
 }
