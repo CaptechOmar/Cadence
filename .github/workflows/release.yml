@@ -31,10 +31,14 @@ jobs:
         working-directory: desktop
       - run: npm run dist:linux
         working-directory: desktop
+      - name: Make the AppImage self-updating (Gear Lever) and create its .zsync file
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq zsync
+          scripts/make-zsync.sh desktop/dist/*.AppImage "${{ github.repository_owner }}" "${{ github.event.repository.name }}"
       - name: Keep the unpacked app (with its permissions) for the Flatpak job
         run: tar czf unpacked.tgz -C desktop/dist linux-unpacked
       - uses: actions/upload-artifact@v4
-        with: { name: linux, path: desktop/dist/*.AppImage }
+        with: { name: linux, path: 'desktop/dist/*.AppImage*' }
       - uses: actions/upload-artifact@v4
         with: { name: linux-unpacked, path: unpacked.tgz }
 
@@ -69,11 +73,11 @@ jobs:
           echo "id=$(scripts/render-flatpak.sh '${{ github.repository_owner }}')" >> "$GITHUB_OUTPUT"
       - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
         with:
-          bundle: Cadence.flatpak
+          bundle: Couchtunes.flatpak
           manifest-path: flatpak/out/${{ steps.render.outputs.id }}.yml
           cache-key: flatpak-builder-${{ github.sha }}
       - uses: actions/upload-artifact@v4
-        with: { name: flatpak, path: Cadence.flatpak }
+        with: { name: flatpak, path: Couchtunes.flatpak }
 
   release:
     if: startsWith(github.ref, 'refs/tags/v')

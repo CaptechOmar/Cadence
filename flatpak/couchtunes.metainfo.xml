@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
   <id>@APP_ID@</id>
-  <name>Cadence</name>
+  <name>Couchtunes</name>
   <summary>An Apple Music-style player for your Navidrome server</summary>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>MIT</project_license>
   <developer_name>Omar Ashraf</developer_name>
-  <url type="homepage">https://github.com/@OWNER@/cadence</url>
-  <url type="bugtracker">https://github.com/@OWNER@/cadence/issues</url>
+  <url type="homepage">https://github.com/@OWNER@/Couchtunes</url>
+  <url type="bugtracker">https://github.com/@OWNER@/Couchtunes/issues</url>
   <description>
-    <p>Cadence plays the music on your own Navidrome (Subsonic / OpenSubsonic) server in a clean, big-screen layout. It is built to be driven with arrow keys, a TV remote or a game controller, and it works with a mouse and keyboard too.</p>
+    <p>Couchtunes plays the music on your own Navidrome (Subsonic / OpenSubsonic) server in a clean, big-screen layout. It is built to be driven with arrow keys, a TV remote or a game controller, and it works with a mouse and keyboard too.</p>
     <p>Features include synced lyrics, an Up next queue, search with an on-screen keyboard, album, artist and playlist pages, light and dark themes, and keyboard and controller shortcuts.</p>
-    <p>Cadence is an independent project. It is not affiliated with Apple or Navidrome.</p>
+    <p>Couchtunes is an independent project. It is not affiliated with Apple or Navidrome.</p>
   </description>
   <launchable type="desktop-id">@APP_ID@.desktop</launchable>
   <categories>
@@ -27,6 +27,7 @@
     <control>gamepad</control>
   </supports>
   <releases>
+    <release version="2.16.0" date="2026-11-03"/>
     <release version="2.16.0-beta.2" type="development" date="2026-11-02"/>
     <release version="2.16.0-beta.1" type="development" date="2026-11-02"/>
     <release version="2.15.1" date="2026-11-01"/>

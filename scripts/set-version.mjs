@@ -13,9 +13,9 @@ for (const f of ['webos/appinfo.json', 'desktop/package.json']) {
   j.version = nv; writeFileSync(p, JSON.stringify(j, null, 2) + '\n');
   console.log(f, '->', nv);
 }
-const mi = join(root, 'flatpak', 'cadence.metainfo.xml');
+const mi = join(root, 'flatpak', 'couchtunes.metainfo.xml');
 let x = readFileSync(mi, 'utf8');
 if (!x.includes(`version="${v}"`)) {
   x = x.replace('<releases>', `<releases>\n    <release version="${v}"${v === base ? '' : ' type="development"'} date="${new Date().toISOString().slice(0, 10)}"/>`);
-  writeFileSync(mi, x); console.log('flatpak/cadence.metainfo.xml -> added release', v);
+  writeFileSync(mi, x); console.log('flatpak/couchtunes.metainfo.xml -> added release', v);
 }

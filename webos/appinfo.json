@@ -1,10 +1,10 @@
 {
   "id": "com.cadence.navidrome",
   "version": "2.16.0",
-  "vendor": "Cadence",
+  "vendor": "Couchtunes",
   "type": "web",
   "main": "index.html",
-  "title": "Cadence",
+  "title": "Couchtunes",
   "icon": "icon-v2.png",
   "largeIcon": "largeIcon-v2.png",
   "bgColor": "#e4374b",

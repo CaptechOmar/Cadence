@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<title>Cadence</title>
+<title>Couchtunes</title>
 <style>
 :root{
   --bg:#ffffff; --bg2:#f5f5f7; --side:#f3f3f5; --card:#e9e9ed;
@@ -760,7 +760,7 @@ kbd{display:inline-flex;align-items:center;justify-content:center;min-width:2rem
 <div id="login" class="overlay login" hidden>
   <form class="panel" id="login-form" autocomplete="on">
     <span class="logo"><svg class="i"><use href="#i-note"/></svg></span>
-    <h1>Cadence</h1>
+    <h1>Couchtunes</h1>
     <p class="sub">Connect to your Navidrome server.</p>
     <label id="f-server"><span>Server address</span>
       <input name="server" type="text" placeholder="http://192.168.1.50:4533" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="url">
@@ -775,8 +775,8 @@ kbd{display:inline-flex;align-items:center;justify-content:center;min-width:2rem
 
 <!-- Quit -->
 <div id="quit" class="overlay modal quit" hidden>
-  <div class="panel" role="alertdialog" aria-label="Quit Cadence" aria-describedby="quit-msg">
-    <h2>Quit Cadence?</h2>
+  <div class="panel" role="alertdialog" aria-label="Quit Couchtunes" aria-describedby="quit-msg">
+    <h2>Quit Couchtunes?</h2>
     <p id="quit-msg">Do you want to close the app, or go back to your music?</p>
     <div class="qbtns">
       <button type="button" data-act="quit-cancel">Cancel</button>
@@ -958,7 +958,7 @@ kbd{display:inline-flex;align-items:center;justify-content:center;min-width:2rem
 <script>
 'use strict';
 /* =====================================================================
-   Cadence: a Navidrome / Subsonic client
+   Couchtunes: a Navidrome / Subsonic client
    ===================================================================== */
 
 /* ---------- small helpers ---------- */
@@ -1018,7 +1018,7 @@ let skipB = skipOk(store.get('cadence.skipb', 10)), skipF = skipOk(store.get('ca
 
 const base = () => proxyMode ? '' : ((cfg && cfg.server) || '').replace(/\/+$/, '');
 function qs(params, c = cfg) {
-  const p = new URLSearchParams({ u: c.user, t: c.token, s: c.salt, v: '1.16.1', c: 'Cadence', f: 'json' });
+  const p = new URLSearchParams({ u: c.user, t: c.token, s: c.salt, v: '1.16.1', c: 'Couchtunes', f: 'json' });
   for (const k in params) {
     const v = params[k];
     if (v == null) continue;
@@ -1166,7 +1166,7 @@ function paintMeta() {
   $$('.js-art').forEach(e => setArt(e, s && !s.radio ? coverUrl(s.coverArt || s.id, e.closest('.np') ? 800 : 160) : ''));
   $('#np-bg').style.backgroundImage = s && s.radio ? radioBackdrop(s.title) : s && (s.coverArt || s.id) ? `url("${coverUrl(s.coverArt || s.id, 200)}")` : '';
   $$('.np-art').forEach(e => { e.style.background = s && s.radio ? radioTile(s.title) : ''; });
-  document.title = s ? `${s.title} · ${s.artist}` : 'Cadence';
+  document.title = s ? `${s.title} · ${s.artist}` : 'Couchtunes';
   setHeart(!!s && stars.has(s.id));
   if (inLyrics()) renderLyrics();
   paintProgress();

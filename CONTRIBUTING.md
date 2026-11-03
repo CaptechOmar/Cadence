@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for helping. Cadence is one HTML file plus the packaging around it, so it is easy to get into.
+Thanks for helping. Couchtunes is one HTML file plus the packaging around it, so it is easy to get into.
 
 ## Run it
 

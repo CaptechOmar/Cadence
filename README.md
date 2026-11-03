@@ -1,14 +1,16 @@
-# Cadence
+# Couchtunes
+
+*Formerly called Cadence.*
 
 An Apple Music-style player for your own [Navidrome](https://www.navidrome.org) server, made for the living-room screen.
 
-I wanted to create a good Navidrome app for LG WebOS and for Desktop PC Consoles (Fullscreen with TV and controller naviation in mind) so I decided to build Cadence.
+I wanted to create a good Navidrome app for LG WebOS and for Desktop PC Consoles (Fullscreen with TV and controller naviation in mind) so I decided to build Couchtunes.
 
-Cadence talks to any Subsonic or OpenSubsonic server and is designed to be driven from across the room: arrow keys, a TV remote or a game controller. It also works fine with a mouse and keyboard on a computer.
+Couchtunes talks to any Subsonic or OpenSubsonic server and is designed to be driven from across the room: arrow keys, a TV remote or a game controller. It also works fine with a mouse and keyboard on a computer.
 
-> Cadence is an independent project. It is not affiliated with Apple or Navidrome, and "Apple Music-style" only describes the look.
+> Couchtunes is an independent project. It is not affiliated with Apple or Navidrome, and "Apple Music-style" only describes the look.
 
-> **How it was made:** Cadence was written with AI (Claude, by Anthropic) and tested heavily by hand by its maintainer, on a real LG webOS TV and on the desktop. Treat it like any other open-source project: read the code if you care, and report anything that doesn't work.
+> **How it was made:** Couchtunes was written with AI (Claude, by Anthropic) and tested heavily by hand by its maintainer, on a real LG webOS TV and on the desktop. Treat it like any other open-source project: read the code if you care, and report anything that doesn't work.
 
 ## Screenshots
 ### Listen Now
@@ -62,10 +64,10 @@ Download the latest files from the [Releases](../../releases) page.
 | Platform | File | How |
 | --- | --- | --- |
 | **LG webOS TV** | `com.cadence.navidrome_*_all.ipk` | Needs a TV in developer mode or rooted with the Homebrew Channel. `ares-install --device <tv> com.cadence.navidrome_*_all.ipk` |
-| **LG webOS (Homebrew Channel)** | repository link | In Homebrew Channel: Settings, Add repository, then paste `https://captechomar.github.io/Cadence/apps.json` |
-| **Linux (any)** | `Cadence-*-linux-x86_64.AppImage` | `chmod +x` it and run it |
-| **Linux (Flatpak)** | `Cadence.flatpak` | `flatpak install --user ./Cadence.flatpak` |
-| **Windows** | `Cadence-*-windows-portable.exe` | Run it. No installer, and nothing is written outside its own settings folder |
+| **LG webOS (Homebrew Channel)** | repository link | In Homebrew Channel: Settings, Add repository, then paste `https://captechomar.github.io/Couchtunes/apps.json` |
+| **Linux (any)** | `Couchtunes-*-linux-x86_64.AppImage` | `chmod +x` it and run it. It carries update information, so [Gear Lever](https://flathub.org/apps/it.mijorus.gearlever) (or AppImageUpdate) can update it for you |
+| **Linux (Flatpak)** | `Couchtunes.flatpak` | `flatpak install --user ./Couchtunes.flatpak` |
+| **Windows** | `Couchtunes-*-windows-portable.exe` | Run it. No installer, and nothing is written outside its own settings folder |
 | **Any browser** | `src/index.html` | Open it, or add `?tv` for the TV layout. The server must allow cross-origin requests |
 
 The desktop apps start full screen. Press `F11` to toggle it, and `Esc` on the first page to get the Quit prompt.
@@ -104,6 +106,7 @@ cd desktop
 npm install
 npm start                # run it
 npm run dist:linux       # AppImage and unpacked app, in desktop/dist
+scripts/make-zsync.sh desktop/dist/*.AppImage <github-user> <repo>   # adds update info and the .zsync file (needs the zsync package)
 npm run dist:win         # Windows portable .exe (build it on Windows)
 
 # LG webOS package

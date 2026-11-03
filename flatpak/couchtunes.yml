@@ -7,7 +7,7 @@ runtime-version: "24.08"
 sdk: org.freedesktop.Sdk
 base: org.electronjs.Electron2.BaseApp
 base-version: "24.08"
-command: cadence
+command: couchtunes
 separate-locales: false
 
 finish-args:
@@ -21,29 +21,29 @@ finish-args:
   - --own-name=org.mpris.MediaPlayer2.chromium.*   # media keys and desktop media controls
 
 modules:
-  - name: cadence
+  - name: couchtunes
     buildsystem: simple
     build-commands:
-      - cp -r cadence-app /app/cadence
-      - install -Dm755 cadence.sh /app/bin/cadence
-      - install -Dm644 cadence.desktop /app/share/applications/${FLATPAK_ID}.desktop
-      - install -Dm644 cadence.metainfo.xml /app/share/metainfo/${FLATPAK_ID}.metainfo.xml
-      - install -Dm644 cadence-512.png /app/share/icons/hicolor/512x512/apps/${FLATPAK_ID}.png
-      - install -Dm644 cadence-256.png /app/share/icons/hicolor/256x256/apps/${FLATPAK_ID}.png
-      - install -Dm644 cadence-128.png /app/share/icons/hicolor/128x128/apps/${FLATPAK_ID}.png
+      - cp -r couchtunes-app /app/couchtunes
+      - install -Dm755 couchtunes.sh /app/bin/couchtunes
+      - install -Dm644 couchtunes.desktop /app/share/applications/${FLATPAK_ID}.desktop
+      - install -Dm644 couchtunes.metainfo.xml /app/share/metainfo/${FLATPAK_ID}.metainfo.xml
+      - install -Dm644 couchtunes-512.png /app/share/icons/hicolor/512x512/apps/${FLATPAK_ID}.png
+      - install -Dm644 couchtunes-256.png /app/share/icons/hicolor/256x256/apps/${FLATPAK_ID}.png
+      - install -Dm644 couchtunes-128.png /app/share/icons/hicolor/128x128/apps/${FLATPAK_ID}.png
     sources:
       - type: dir
         path: ../../desktop/dist/linux-unpacked
-        dest: cadence-app
+        dest: couchtunes-app
       - type: file
-        path: cadence.sh
+        path: couchtunes.sh
       - type: file
-        path: cadence.desktop
+        path: couchtunes.desktop
       - type: file
-        path: cadence.metainfo.xml
+        path: couchtunes.metainfo.xml
       - type: file
-        path: cadence-512.png
+        path: couchtunes-512.png
       - type: file
-        path: cadence-256.png
+        path: couchtunes-256.png
       - type: file
-        path: cadence-128.png
+        path: couchtunes-128.png

@@ -1,11 +1,11 @@
 [Desktop Entry]
 Type=Application
-Name=Cadence
+Name=Couchtunes
 GenericName=Music Player
 Comment=An Apple Music-style player for your Navidrome server
-Exec=cadence %U
+Exec=couchtunes %U
 Icon=@APP_ID@
 Terminal=false
 Categories=AudioVideo;Audio;Music;Player;
 Keywords=navidrome;subsonic;music;streaming;lyrics;
-StartupWMClass=Cadence
+StartupWMClass=Couchtunes

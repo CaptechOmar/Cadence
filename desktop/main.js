@@ -15,7 +15,7 @@ function create() {
     cb({ responseHeaders: h });
   });
   const win = new BrowserWindow({
-    width: 1280, height: 720, fullscreen: true, minWidth: 640, minHeight: 400, backgroundColor: '#111111', title: 'Cadence',
+    width: 1280, height: 720, fullscreen: true, minWidth: 640, minHeight: 400, backgroundColor: '#111111', title: 'Couchtunes',
     autoHideMenuBar: true, icon: path.join(__dirname, 'icon.png'),
     webPreferences: { backgroundThrottling: false, spellcheck: false }
   });

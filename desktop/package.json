@@ -1,9 +1,9 @@
 {
-  "name": "cadence",
-  "version": "2.16.0-beta.2",
+  "name": "couchtunes",
+  "version": "2.16.0",
   "description": "An Apple Music-style player for your Navidrome server, built for TVs and big screens",
   "author": "Omar Ashraf",
-  "homepage": "https://github.com/CaptechOmar/cadence",
+  "homepage": "https://github.com/CaptechOmar/Couchtunes",
   "main": "main.js",
   "license": "MIT",
   "scripts": {
@@ -17,8 +17,8 @@
     "electron-builder": "25.1.8"
   },
   "build": {
-    "appId": "com.cadence.navidrome.desktop",
-    "productName": "Cadence",
+    "appId": "com.couchtunes.desktop",
+    "productName": "Couchtunes",
     "files": [
       "main.js",
       "icon.png",
@@ -34,7 +34,8 @@
       ],
       "category": "AudioVideo",
       "icon": "icon.png",
-      "artifactName": "Cadence-${version}-linux-x86_64.${ext}"
+      "artifactName": "Couchtunes-${version}-linux-x86_64.${ext}",
+      "executableName": "couchtunes"
     },
     "win": {
       "target": [
@@ -46,8 +47,8 @@
         }
       ],
       "icon": "icon.png",
-      "artifactName": "Cadence-${version}-windows-portable.${ext}"
+      "artifactName": "Couchtunes-${version}-windows-portable.${ext}"
     }
   },
-  "repository": "github:CaptechOmar/cadence"
+  "repository": "github:CaptechOmar/Couchtunes"
 }
